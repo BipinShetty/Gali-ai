@@ -14,22 +14,61 @@ This project is a cost-efficient prototype for deriving deep business insights f
 
 ---
 
-## ✅ Key Features
+## Key Features
 
-### 🔎 Insight Dimensions Covered
+### 1. Ingests customer journey data
 
-Our prompt is specifically engineered to extract useful observations, such as:
+* Accepts `customer_journeys.json` file via Streamlit file uploader
+* Backend reads and validates it using FastAPI
 
-* **Behavioral patterns**: what successful users do differently
-* **Drop-off points**: where users lose interest
-* **Search quality & gaps**: which searches succeed vs. frustrate
-* **Cart behavior**: which products are added but not purchased
-* **Conversion insights**: device, category, pricing influences
-* **Product trends**: top viewed vs. top purchased discrepancies
-* **Customer hesitation signals**: re-visits, search loops, time spent
+### 2. Uses an AI model to generate insights
 
-These are **directly rooted in the schema of the JSON**: `activity_type`, `conversion`, `cart_value`, `search_query`, etc.
+* Uses `openai.OpenAI(api_key=...)` to call GPT-4-Turbo
+* Extracts:
 
+  * Common user behaviors
+  * Drop-off and decision points
+  * Conversion vs. abandonment contrasts
+  * Search quality and cart behavior
+  * Product interest vs. purchase delta
+  * High-impact recommendations
+
+### 3. Presents insights in a usable UI
+
+* Simple Streamlit-based frontend
+* Displays GPT output in Markdown block
+* Slider for sample size control
+
+### 4. Clean and intuitive, not overly polished
+
+* The UI is minimal and task-focused
+* Not styled or branded — aligns with "prototype" intent
+
+### 5. Well-chosen tools and stack
+
+* **FastAPI**: Efficient, async-ready backend
+* **OpenAI**: LLM insights engine
+* **Streamlit**: Lightweight, no-boilerplate UI
+* **Python**: Simple for data processing
+
+---
+
+## 💡 Prompt Philosophy
+
+> *"You're reviewing {sample\_size} customer journeys..."*
+
+The prompt intentionally avoids generic phrasing and instead mirrors how a human business analyst would review a spreadsheet or analytics dashboard. It explicitly:
+
+* Aligns to JSON structure (`activity_type`, `search_query`, `conversion`, etc.)
+* Requests observations in bullet format
+* Frames GPT as a **collaborator** instead of a content generator
+* Encourages **practical, non-obvious business insights**
+
+It covers all six insight areas from the assignment plus bonus ones:
+
+* Price sensitivity
+* Product performance
+* Category drop-off
 ---
 
 ## 💰 Cost Optimization Strategy
@@ -40,8 +79,27 @@ These are **directly rooted in the schema of the JSON**: `activity_type`, `conve
 * **Pre-summarization**: We transform long activity logs into compact summaries with session metadata before sending to GPT (`json_summary`).
 * **Token limit control**: Sessions are sliced to stay under 4K tokens.
 * **Environment-based config**: API keys are securely loaded via config file or environment.
+### 🔍 Token Budget Control
+* Pre-processes JSON into summaries (e.g., flow, session duration, avg duration)
+*  Filters out noise (no raw HTML or huge payloads sent to GPT)
+*  Uses `sample_size` slider with default = 10 sessions
+* Uses **balanced sampling** to select a mix of converted and abandoned sessions for richer signal
 
-➡️ This reduces token usage by **70–85%** vs. naive approaches.
+
+## Tools & Choices
+
+* **OpenAI GPT-4-turbo**: Fast, cost-effective LLM
+* **FastAPI**: Scalable, clean Python web framework
+* **Streamlit**: Ideal for quick UI without HTML/JS
+* **Python + JSON**: Native match to assignment's format
+
+---
+
+## Tradeoffs
+
+* No authentication or rate limiting (prototype scope)
+* Prompt + analysis assumes English input and US market patterns
+* UI is functional, not styled (per brief)
 
 ---
 
@@ -108,3 +166,31 @@ A successful run should:
 
 The combination of LLM + domain-aligned prompt + session sampling + activity summarization = high-quality analysis at low cost. This is not just an LLM wrapper — it’s a lightweight but intelligent insight engine.
 
+---
+
+## Success Criteria
+
+* [x] Can run and analyze real `customer_journeys.json`
+* [x] GPT insights reflect **actual patterns** in the sessions, not generic advice
+* [x] Cost remains low (<1000 tokens typical)
+* [x] Frontend works locally via Streamlit
+* [x] API works via `POST /analyze`
+* [x] Reviewer sees clearly how AI, backend, and UI connect
+
+---
+
+## How to Run It
+
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Provide OpenAI Key
+echo '{ "OPENAI_API_KEY": "sk-..." }' > config.json
+
+# 3. Start API
+uvicorn app.main:app --reload
+
+# 4. Launch UI
+streamlit run streamlit_app.py
+```

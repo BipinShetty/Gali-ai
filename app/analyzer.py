@@ -3,7 +3,7 @@ import json
 from app.config import get_openai_key
 
 # Builds the prompt as per req doc to get quick insights into customer behaviour
-# Take 10 sample size to optimize LLM call cost.
+# Take 10 sample size at a time by default to optimize LLM call cost.
 def analyze_journeys(journeys, sample_size=10):
     summary_input = json_summary(select_balanced_sample(journeys, sample_size))
     prompt = f"""

@@ -29,6 +29,8 @@ Our prompt is specifically engineered to extract useful observations, such as:
 * **Customer hesitation signals**: re-visits, search loops, time spent
 
 These are **directly rooted in the schema of the JSON**: `activity_type`, `conversion`, `cart_value`, `search_query`, etc.
+![Screen Shot 2025-05-06 at 8 31 50 PM](https://github.com/user-attachments/assets/c3ec5ff9-573f-4e5d-996a-f82835853b22)
+![Screen Shot 2025-05-06 at 8 32 20 PM](https://github.com/user-attachments/assets/ef625286-5a7d-4217-9c5e-c768b36736a2)
 
 ---
 

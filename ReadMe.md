@@ -64,15 +64,15 @@ It covers all six insight areas from the assignment plus bonus ones:
 * Category drop-off
 ---
 
-## 💰 Cost Optimization Strategy
+##  Cost Optimization Strategy
 
-### 🔧 Techniques Used
+###  Techniques Used
 
 * **Balanced sampling**: Equal number of converted and abandoned sessions selected (`select_balanced_sample`). This improves signal and reduces hallucination.
 * **Pre-summarization**: We transform long activity logs into compact summaries with session metadata before sending to GPT (`json_summary`).
 * **Token limit control**: Sessions are sliced to stay under 4K tokens.
 * **Environment-based config**: API keys are securely loaded via config file or environment.
-### 🔍 Token Budget Control
+###  Token Budget Control
 * Pre-processes JSON into summaries (e.g., flow, session duration, avg duration)
 *  Filters out noise (no raw HTML or huge payloads sent to GPT)
 *  Uses `sample_size` slider with default = 10 sessions
@@ -86,13 +86,36 @@ It covers all six insight areas from the assignment plus bonus ones:
 * **Streamlit**: Ideal for quick UI without HTML/JS
 * **Python + JSON**: Native match to assignment's format
 
+
+--
+
+## 🎯 Success Criteria
+
+A successful run should:
+
+* Can run and analyze real `customer_journeys.json`
+* Return GPT-generated insights clearly tied to what’s in the data
+* Respect cost and prompt constraints
+* Avoid generic fluff — insights should be actionable and reflect real journey patterns (e.g., "high cart values on mobile drop at checkout").
+* GPT insights reflect **actual patterns** in the sessions, not generic advice
+* Cost remains low (<1000 tokens typical)
+* Frontend works locally via Streamlit
+* Reviewer sees clearly how AI, backend, and UI connect
+
+---
+
+## Why It Works
+
+The combination of LLM + domain-aligned prompt + session sampling + activity summarization = high-quality analysis at low cost. 
+
 ---
 
 ## Tradeoffs
 
-* No authentication or rate limiting (prototype scope)
+* No authentication or rate limiting
 * Prompt + analysis assumes English input and US market patterns
 * UI is functional, not styled (per brief)
+* Single-shot prompt approach
 
 ---
 
@@ -142,48 +165,5 @@ uvicorn app.main:app --reload
 streamlit run streamlit_app.py
 ```
 
----
+-
 
-## 🎯 Success Criteria
-
-A successful run should:
-
-* Accept a JSON of user sessions
-* Return GPT-generated insights clearly tied to what’s in the data
-* Respect cost and prompt constraints
-* Avoid generic fluff — insights should be actionable and reflect real journey patterns (e.g., "high cart values on mobile drop at checkout").
-
----
-
-## 🙌 Why It Works
-
-The combination of LLM + domain-aligned prompt + session sampling + activity summarization = high-quality analysis at low cost. This is not just an LLM wrapper — it’s a lightweight but intelligent insight engine.
-
----
-
-## Success Criteria
-
-* [x] Can run and analyze real `customer_journeys.json`
-* [x] GPT insights reflect **actual patterns** in the sessions, not generic advice
-* [x] Cost remains low (<1000 tokens typical)
-* [x] Frontend works locally via Streamlit
-* [x] API works via `POST /analyze`
-* [x] Reviewer sees clearly how AI, backend, and UI connect
-
----
-
-## How to Run It
-
-```bash
-# 1. Install dependencies
-pip install -r requirements.txt
-
-# 2. Provide OpenAI Key
-echo '{ "OPENAI_API_KEY": "sk-..." }' > config.json
-
-# 3. Start API
-uvicorn app.main:app --reload
-
-# 4. Launch UI
-streamlit run streamlit_app.py
-```

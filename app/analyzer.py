@@ -49,7 +49,7 @@ def select_balanced_sample(journeys, sample_size):
 
     selected_converted = converted[:half]
     selected_abandoned = abandoned[:sample_size - len(selected_converted)]
-
+    # Make sure the segmentation is balanced and not skewed towards one
     if len(selected_converted) < half:
         extra = converted[half:half + (sample_size - len(selected_converted) - len(selected_abandoned))]
         selected_converted += extra
@@ -77,12 +77,17 @@ def json_summary(journeys):
         total_dur = sum(a.get("duration_ms", 0) for a in activities)
         activity_count = len(activities)
 
+        # go thru all activities in the session...
         for a in activities:
+            # if user viewed a product, track that
             if a.get("activity_type") == "product_view":
-                product_id = a["details"].get("product_id")
-                if product_id:
-                    product_views[product_id] += 1
+                product_id = a["details"].get("product_id")  # grab product id from activity details
+                if product_id:  # double-check just in case it's missing
+                    product_views[product_id] += 1  # count how many times this product was seen
+
+            # if user actually bought something
             elif a.get("activity_type") == "purchase":
+                # some sessions have multiple items purchased, loop accordingly
                 for _ in range(a["details"].get("items", 1)):
                     product_purchases[a["details"].get("product_id", "unknown")] += 1
 
@@ -97,9 +102,16 @@ def json_summary(journeys):
             "number_of_activities": activity_count
         })
 
+    # if there's at least one session summary built above
     if summary:
+        # get top 5 most viewed products across all sessions
         top_views = dict(product_views.most_common(5))
+
+        # get top 5 most purchased products (again, across all)
         top_purchases = dict(product_purchases.most_common(5))
+
+        # attach these to the first session summary — bit of a hack but works for now
+        # ideally should go in a separate section maybe
         summary[0]["top_viewed_products"] = top_views
         summary[0]["top_purchased_products"] = top_purchases
 

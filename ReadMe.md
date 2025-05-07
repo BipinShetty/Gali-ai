@@ -18,7 +18,7 @@ This project is a cost-efficient prototype for deriving deep business insights f
 
 ### 🔎 Insight Dimensions Covered
 
-Our prompt is specifically engineered to extract useful observations, such as:
+My prompt is specifically engineered to extract useful observations, such as:
 
 * **Behavioral patterns**: what successful users do differently
 * **Drop-off points**: where users lose interest

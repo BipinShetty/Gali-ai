@@ -1,12 +1,9 @@
-from dotenv import load_dotenv
-load_dotenv()
 import os
 import json
 from app.config import get_openai_key
 
-# setting the key here, don't forget to set the config or env or it will just break
-# removed global key assignment because openai>=1.x requires per-request keys
-
+# Builds the prompt as per req doc to get quick insights into customer behaviour
+# Take 10 sample size to optimize LLM call cost.
 def analyze_journeys(journeys, sample_size=10):
     summary_input = json_summary(select_balanced_sample(journeys, sample_size))
     prompt = f"""
@@ -44,6 +41,7 @@ Respond in clear bullet points.
         return f"Error during analysis: {str(e)}"
 
 
+# This section divides the customer into segmentation of abandoned vs conversion
 def select_balanced_sample(journeys, sample_size):
     converted = [j for j in journeys if j.get("conversion")]
     abandoned = [j for j in journeys if not j.get("conversion")]
@@ -62,6 +60,7 @@ def select_balanced_sample(journeys, sample_size):
     return (selected_converted + selected_abandoned)[:sample_size]
 
 
+#This section builds the summary input to analyze
 def json_summary(journeys):
     from datetime import datetime
     from collections import Counter

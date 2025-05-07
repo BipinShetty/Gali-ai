@@ -1,8 +1,7 @@
 import streamlit as st
 import requests
-import json
 
-st.title("🛒 AI-Powered E-commerce Journey Analyzer")
+st.title("AI-Powered E-commerce Journey Analyzer")
 st.caption("Analyzing a balanced mix of converted and abandoned customer sessions for actionable insights.")
 
 uploaded_file = st.file_uploader("Upload customer_journeys.json", type="json")

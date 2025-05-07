@@ -14,30 +14,23 @@ This project is a cost-efficient prototype for deriving deep business insights f
 
 ---
 
-## Key Features
+## ✅ Key Features
 
-### 1. Ingests customer journey data
+### 🔎 Insight Dimensions Covered
 
-* Accepts `customer_journeys.json` file via Streamlit file uploader
-* Backend reads and validates it using FastAPI
+Our prompt is specifically engineered to extract useful observations, such as:
 
-### 2. Uses an AI model to generate insights
+* **Behavioral patterns**: what successful users do differently
+* **Drop-off points**: where users lose interest
+* **Search quality & gaps**: which searches succeed vs. frustrate
+* **Cart behavior**: which products are added but not purchased
+* **Conversion insights**: device, category, pricing influences
+* **Product trends**: top viewed vs. top purchased discrepancies
+* **Customer hesitation signals**: re-visits, search loops, time spent
 
-* Uses `openai.OpenAI(api_key=...)` to call GPT-4-Turbo
-* Extracts:
-
-  * Common user behaviors
-  * Drop-off and decision points
-  * Conversion vs. abandonment contrasts
-  * Search quality and cart behavior
-  * Product interest vs. purchase delta
-  * High-impact recommendations
-
-### 3. Presents insights in a usable UI
-
-* Simple Streamlit-based frontend
-* Displays GPT output in Markdown block
-* Slider for sample size control
+These are **directly rooted in the schema of the JSON**: `activity_type`, `conversion`, `cart_value`, `search_query`, etc.
+![Screen Shot 2025-05-06 at 8 31 50 PM](https://github.com/user-attachments/assets/c3ec5ff9-573f-4e5d-996a-f82835853b22)
+![Screen Shot 2025-05-06 at 8 32 20 PM](https://github.com/user-attachments/assets/ef625286-5a7d-4217-9c5e-c768b36736a2)
 
 ### 4. Clean and intuitive, not overly polished
 

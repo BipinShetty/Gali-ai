@@ -14,9 +14,14 @@ This project is a cost-efficient prototype for deriving deep business insights f
 
 ---
 
-## ✅ Key Features
+## Key Features
 
-### 🔎 Insight Dimensions Covered
+### 1. Ingests customer journey data
+
+* Accepts `customer_journeys.json` file via Streamlit file uploader
+* Backend reads and validates it using FastAPI
+
+### 2. Uses an AI model to generate insights
 
 My prompt is specifically engineered to extract useful observations, such as:
 
@@ -31,6 +36,12 @@ My prompt is specifically engineered to extract useful observations, such as:
 These are **directly rooted in the schema of the JSON**: `activity_type`, `conversion`, `cart_value`, `search_query`, etc.
 ![Screen Shot 2025-05-06 at 8 31 50 PM](https://github.com/user-attachments/assets/c3ec5ff9-573f-4e5d-996a-f82835853b22)
 ![Screen Shot 2025-05-06 at 8 32 20 PM](https://github.com/user-attachments/assets/ef625286-5a7d-4217-9c5e-c768b36736a2)
+
+### 3. Presents insights in a usable UI
+
+* Simple Streamlit-based frontend
+* Displays GPT output in Markdown block
+* Slider for sample size control
 
 ### 4. Clean and intuitive, not overly polished
 
@@ -165,5 +176,4 @@ uvicorn app.main:app --reload
 streamlit run streamlit_app.py
 ```
 
--
 

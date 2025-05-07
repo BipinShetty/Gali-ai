@@ -57,7 +57,7 @@ These are **directly rooted in the schema of the JSON**: `activity_type`, `conve
 
 ---
 
-## 💡 Prompt Philosophy
+## Prompt Philosophy
 
 > *"You're reviewing {sample\_size} customer journeys..."*
 

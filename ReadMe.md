@@ -1,4 +1,4 @@
-# 🛒 AI-Powered E-commerce Journey Analyzer
+#  AI-Powered E-commerce Journey Analyzer
 
 ## Overview
 
@@ -46,7 +46,7 @@ These are **directly rooted in the schema of the JSON**: `activity_type`, `conve
 ### 4. Clean and intuitive, not overly polished
 
 * The UI is minimal and task-focused
-* Not styled or branded — aligns with "prototype" intent
+* Not styled or branded — uses stream-lit for quick UI interface
 
 ### 5. Well-chosen tools and stack
 

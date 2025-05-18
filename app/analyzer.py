@@ -87,25 +87,30 @@ def select_balanced_sample(journeys, sample_size):
 
     return selected_converted + selected_abandoned
 
-
-
-
-
-
 def json_summary(journeys):
+    """
+    Summarizes a list of customer journey sessions into a compact JSON structure
+    that captures behavioral insights, search activity, product interaction, and purchase behavior.
+    """
+
     summary = []
-    product_views = Counter()
-    product_purchases = Counter()
-    product_info = defaultdict(dict)
+    product_views = Counter()         # Tracks how many times each product is viewed
+    product_purchases = Counter()     # Tracks how many times each product is purchased
+    product_info = defaultdict(dict)  # Stores metadata (name, category, price) for each product_id
 
     for j in journeys:
         activities = j.get("activities", [])
+
+        # Compute session duration
         start = datetime.fromisoformat(j.get("session_start").replace("Z", "+00:00"))
         end = datetime.fromisoformat(j.get("session_end").replace("Z", "+00:00"))
         session_duration = (end - start).total_seconds()
+
+        # Total duration across all activities for avg calculation
         total_dur = sum(a.get("duration_ms", 0) for a in activities)
         activity_count = len(activities)
 
+        # Initialize containers to collect specific activity-level insights
         searches = []
         search_results = []
         pages_viewed = []
@@ -118,6 +123,7 @@ def json_summary(journeys):
             act_type = a.get("activity_type")
             details = a.get("details", {})
 
+            # Capture product views and associated metadata
             if act_type == "product_view":
                 pid = details.get("product_id")
                 if pid:
@@ -130,6 +136,7 @@ def json_summary(journeys):
                             "price": product_details.get("price"),
                         }
 
+            # Track purchases, quantities, and total spend
             elif act_type == "purchase":
                 pid = details.get("product_id", "unknown")
                 qty = details.get("items", 1)
@@ -138,6 +145,7 @@ def json_summary(journeys):
                 for _ in range(qty):
                     product_purchases[pid] += 1
 
+            # Record search terms and how many results were returned
             elif act_type == "search":
                 searches.append(details.get("search_query"))
                 search_results.append({
@@ -145,9 +153,11 @@ def json_summary(journeys):
                     "results": details.get("results_count")
                 })
 
+            # Track which category or product pages were viewed
             elif act_type == "page_view":
                 pages_viewed.append(details.get("page_path"))
 
+            # Track what was added to the cart (but not necessarily purchased)
             elif act_type == "add_to_cart":
                 cart_additions.append({
                     "product_id": details.get("product_id"),
@@ -155,12 +165,14 @@ def json_summary(journeys):
                     "cart_value": details.get("cart_value")
                 })
 
+            # Capture checkout steps (e.g., address, payment) and whether they were completed
             elif act_type == "checkout":
                 checkout_steps.append({
                     "step": details.get("step"),
                     "completed": details.get("completed")
                 })
 
+        # Summarize one session's worth of information
         session_summary = {
             "session_id": j.get("session_id"),
             "device": j.get("device_type"),
@@ -168,7 +180,7 @@ def json_summary(journeys):
             "session_duration_sec": session_duration,
             "avg_activity_duration_ms": round(total_dur / max(1, activity_count)),
             "number_of_activities": activity_count,
-            "flow": [a.get("activity_type") for a in activities],
+            "flow": [a.get("activity_type") for a in activities],  # ordered sequence of actions
             "searches": searches,
             "search_results": search_results,
             "pages_viewed": pages_viewed,
@@ -182,8 +194,13 @@ def json_summary(journeys):
 
         summary.append(session_summary)
 
+    # Attach top-level insights across all sessions — only once
     if summary:
         def enrich(counter):
+            """
+            Takes a product counter and returns a list of top 5 products with their metadata
+            (or 'Unknown' if details were not captured during the session).
+            """
             enriched = []
             for pid, count in counter.most_common(5):
                 info = product_info.get(pid, {})
@@ -200,5 +217,6 @@ def json_summary(journeys):
         summary[0]["top_purchased_products"] = enrich(product_purchases)
 
     return json.dumps(summary, indent=2)
+
 
 

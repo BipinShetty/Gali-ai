@@ -1,6 +1,7 @@
 import os
-import json
 from app.config import get_openai_key
+import json
+from datetime import datetime
 from collections import Counter, defaultdict
 
 # Builds the prompt as per req doc to get quick insights into customer behaviour
@@ -14,6 +15,25 @@ from collections import Counter, defaultdict
     # add_to_cart
     # checkout
     # purchase
+
+    # Additional prompts
+    # Segment Abandonment by Journey Stage
+    #     - Search abandonment (searched but no view)
+    #     - Product abandonment (viewed but no cart)
+    #     - Cart abandonment (added but no checkout)
+    #     - Checkout abandonment (initiated but didn't complete)
+
+    # Top Carted But Not Purchased Products
+    #     Products that are added to cart often but never purchased:
+    #     - "Deluxe Smartwatches H" (p-1036)
+    #     - "Classic Smartwatches E" (p-1033)
+    #     - "Vintage Laptops C" (p-1009)
+
+    # Purchase Paths and behaviour
+    # Monetization Insight Layer
+    #     - Average conversion revenue per session
+    #     - Highest value cart that got abandonedc
+
 
 
 def analyze_journeys(journeys, sample_size=10):
@@ -71,9 +91,6 @@ def select_balanced_sample(journeys, sample_size):
 
 
 
-import json
-from collections import Counter, defaultdict
-from datetime import datetime
 
 def json_summary(journeys):
     summary = []

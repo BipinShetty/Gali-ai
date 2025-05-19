@@ -9,12 +9,12 @@ from collections import Counter, defaultdict
 
 
 # activity type
-    # page_view
-    # search
-    # product_view
-    # add_to_cart
-    # checkout
-    # purchase
+    # page_view ->  The produc/page navigate and stuff of interest
+    # search -> The outcome of seach, what didnt bring result vs exits
+    # product_view -> The product of interest
+    # add_to_cart -> the product of interest,check price sensitivity, carted but not brought
+    # checkout -> Check for flow and maybe shipping cost
+    # purchase -> product purchased and conversion rate.
 
     # Additional prompts
     # Segment Abandonment by Journey Stage
@@ -34,12 +34,16 @@ from collections import Counter, defaultdict
     #     - Average conversion revenue per session
     #     - Highest value cart that got abandonedc
 
+    # User Paths and behaviour
+        # New vs returning user
+
 
 
 def analyze_journeys(journeys, sample_size=10):
     summary_input = json_summary(select_balanced_sample(journeys, sample_size))
     prompt = f"""
-You are a senior business analyst for an e-commerce platform. You are provided with a summarized sample of {sample_size} customer sessions:
+You are a senior business analyst for an e-commerce platform. You are provided with a summarized sample of {sample_size} customer sessions.
+Note: The lists of "viewed_products_by_popularity" and "purchased_products_by_popularity" are pre-sorted in descending order of frequency — i.e., the most viewed/purchased products appear at the top.
 
 {summary_input}
 
@@ -198,11 +202,11 @@ def json_summary(journeys):
     if summary:
         def enrich(counter):
             """
-            Takes a product counter and returns a list of top 5 products with their metadata
+            Takes a product counter and returns a list of top N=25 products with their metadata
             (or 'Unknown' if details were not captured during the session).
             """
             enriched = []
-            for pid, count in counter.most_common(5):
+            for pid, count in counter.most_common(25):
                 info = product_info.get(pid, {})
                 enriched.append({
                     "product_id": pid,
@@ -213,8 +217,8 @@ def json_summary(journeys):
                 })
             return enriched
 
-        summary[0]["top_viewed_products"] = enrich(product_views)
-        summary[0]["top_purchased_products"] = enrich(product_purchases)
+        summary[0]["viewed_products_by_popularity"] = enrich(product_views)
+        summary[0]["purchased_products_by_popularity"] = enrich(product_purchases)
 
     return json.dumps(summary, indent=2)
 
